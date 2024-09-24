@@ -17,25 +17,21 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @DynamicUpdate
 public class PostEntity extends BaseEntity {
-    @Column(nullable = false, unique = true)
-    private String slug;
-
     @Column(nullable = false)
     private String title;
 
-    @Column(columnDefinition="TEXT")
+    @Column(columnDefinition = "TEXT")
     private String body;
 
     private LocalDateTime deletedAt;
 
     public PostEntity(Post post) {
-        this.slug = post.getSlug();
         this.title = post.getTitle();
         this.body = post.getBody();
     }
 
     public Post toDomain() {
-        return new Post(id, slug, title, body, createdAt, updatedAt);
+        return new Post(id, title, body, createdAt, updatedAt);
     }
 
     public void delete() {

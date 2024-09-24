@@ -1,6 +1,7 @@
 package com.example.demo.domain.post;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -17,8 +18,12 @@ import java.util.Locale;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post {
+    private static final String CACHE_VALUE = "posts";
+
+    @JsonIgnore
+    private String cacheKey;
+
     private Long id;
-    private String slug;
     private String title;
     private String body;
 
@@ -35,28 +40,20 @@ public class Post {
     public Post(String title, String body) {
         Assert.notNull(title, "title not null");
         Assert.notNull(body, "body not null");
-
-        this.slug = toSlug(title);
         this.title = title;
         this.body = body;
     }
 
-    public Post(Long id, String slug, String title, String body, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public Post(Long id, String title, String body, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.cacheKey = Post.generateCacheKey(id);
         this.id = id;
-        this.slug = slug;
         this.title = title;
         this.body = body;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
 
-    private String toSlug(String input) {
-        String normalized = Normalizer.normalize(input, Normalizer.Form.NFD);
-
-        return normalized.replaceAll("[^\\p{ASCII}]", "")
-                .replaceAll("[^a-zA-Z0-9\\s]", "")
-                .trim()
-                .replaceAll("\\s+", "-")
-                .toLowerCase(Locale.ROOT);
+    public static String generateCacheKey(Long id) {
+        return String.format("%s:%s", CACHE_VALUE, id);
     }
 }
