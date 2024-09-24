@@ -30,10 +30,9 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Transactional
     @Override
-    public Post save(Post post) {
+    public void save(Post post) {
         PostEntity postEntity = new PostEntity(post);
-
-        return postRepository.save(postEntity).toDomain();
+        postRepository.save(postEntity);
     }
 
     @Transactional

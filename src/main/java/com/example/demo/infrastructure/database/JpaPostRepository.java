@@ -11,7 +11,7 @@ public interface JpaPostRepository extends Repository<PostEntity, Long> {
     @Query(value = "SELECT p FROM PostEntity p WHERE p.deletedAt IS NULL")
     List<PostEntity> findAll();
 
-    PostEntity save(PostEntity postEntity);
+    void save(PostEntity postEntity);
 
     @Query(value = "SELECT p FROM PostEntity p WHERE p.id = :id AND p.deletedAt IS NULL")
     Optional<PostEntity> findById(Long id);

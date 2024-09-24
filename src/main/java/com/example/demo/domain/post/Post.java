@@ -1,8 +1,6 @@
 package com.example.demo.domain.post;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -19,11 +17,6 @@ import java.util.Locale;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post {
-    private static final String PREFIX_CACHE_KEY = "post";
-
-    @JsonIgnore
-    private String cacheKey;
-
     private Long id;
     private String slug;
     private String title;
@@ -39,9 +32,6 @@ public class Post {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime updatedAt;
 
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Long countOfComments;
-
     public Post(String title, String body) {
         Assert.notNull(title, "title not null");
         Assert.notNull(body, "body not null");
@@ -52,7 +42,6 @@ public class Post {
     }
 
     public Post(Long id, String slug, String title, String body, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.cacheKey = Post.generateCacheKey(id);
         this.id = id;
         this.slug = slug;
         this.title = title;
@@ -69,9 +58,5 @@ public class Post {
                 .trim()
                 .replaceAll("\\s+", "-")
                 .toLowerCase(Locale.ROOT);
-    }
-
-    public static String generateCacheKey(Long id) {
-        return String.format("%s:%s", PREFIX_CACHE_KEY, id);
     }
 }
